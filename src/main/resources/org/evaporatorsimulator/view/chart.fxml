@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+
+<LineChart xmlns="http://javafx.com/javafx/8"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="org.evaporatorsimulator.controller.ChartController"
+           fx:id="chart"
+           styleClass="chart"
+           prefWidth="600"
+>
+    <xAxis>
+        <CategoryAxis />
+    </xAxis>
+    <yAxis>
+        <NumberAxis />
+    </yAxis>
+</LineChart>

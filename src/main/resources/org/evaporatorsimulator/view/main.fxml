@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+
+<?import javafx.scene.layout.VBox?>
+
+
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.control.ScrollPane?>
+<VBox  xmlns="http://javafx.com/javafx/8"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.evaporatorsimulator.controller.MainController"
+            fx:id="rootPane">
+
+  <!-- Barra de menú en la parte superior -->
+    <VBox prefHeight="900" prefWidth="1200" >
+        <HBox prefHeight="90" prefWidth="1200" fx:id="barApp" style="-fx-background-color: #2C3E50; -fx-padding: 10;" styleClass="menuBar">
+            <VBox alignment="CENTER"  >
+                <Label text="SIMULADOR DE PLANTA DE EVAPORACION" style="-fx-text-fill: white;  -fx-font-size: 20px;" />
+            </VBox>
+            <HBox fx:id="windowButtons" alignment="CENTER_RIGHT" spacing="10" HBox.hgrow="ALWAYS">
+                <!-- Botón Minimizar -->
+                <Button text="-" style="-fx-background-color: #34495E; -fx-text-fill: white;" onAction="#minimizeWindow"/>
+                <!-- Botón Cerrar -->
+                <Button text="X" style="-fx-background-color: #E74C3C; -fx-text-fill: white;" onAction="#closeWindow"/>
+            </HBox>
+        </HBox>
+
+
+    <!-- Contenido principal de la aplicación -->
+        <Pane layoutY="60" fx:id="mainContent" prefHeight="800" prefWidth="1200">
+            <!-- Placeholder para la vista de la planta -->
+            <HBox  >
+                <ScrollPane fx:id="scrollPane"  style="-fx-background-color: #3d4855;">
+                <Pane fx:id="leftPane" style="-fx-background-color: #3d4855;">
+                    <!-- Contenido del lado izquierdo -->
+                </Pane>
+            </ScrollPane>
+                <VBox fx:id="rightPane"   prefWidth="600">
+                    <!-- Contenido del lado derecho -->
+                </VBox>
+            </HBox>
+        </Pane>
+
+    </VBox>
+
+</VBox >

@@ -1,0 +1,72 @@
+/* styles.css */
+.root {
+    -fx-background-color: #e79e6d;
+     -fx-border-width: 1px;
+    -fx-max-width: 1400px;
+     -fx-max-height: 800px;
+
+
+}
+
+
+.chart{
+-fx-background-color: #fff;
+ -fx-min-width: 500px;
+  -fx-max-width: 500px;
+   -fx-max-height: 340px;
+   -fx-border-color: #ccc;
+}
+
+.evaporatorImg{
+
+ -fx-padding: 0px ;
+
+}
+
+
+
+.control-pane{
+-fx-background-color: #999;
+ -fx-padding: 20px;
+  -fx-min-width: 400;
+}
+.plant-pane {
+
+    -fx-background-color: #3d4855;
+ /*   -fx-border-color: #ccc;*/
+    -fx-max-width: 900;
+    -fx-max-height: 800;
+        -fx-min-width: 900;
+        -fx-min-height: 800;
+
+}
+
+.button {
+    -fx-background-color: #96bbd8;
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-padding: 10px 30px;
+    -fx-margin: 0px 30px;
+
+}
+
+.label {
+    -fx-font-size: 16px;
+    -fx-text-fill: #ffffff;
+}
+
+
+.tooltip {
+    -fx-background-color: #2C3E50;
+    -fx-text-fill: #ffffff;
+    -fx-padding: 3px; /* Controla el padding del Tooltip */
+    -fx-font-size: 12px; /* Tamaño de fuente */
+    -fx-border-color: #ffffff;
+    -fx-max-width: 400px; /* Limitar el tamaño máximo del Tooltip */
+     -fx-max-height: 30px; /* Limitar el tamaño máximo del Tooltip */
+}}
+
+.menuBar{
+ -fx-min-width: 1400;
+
+}
