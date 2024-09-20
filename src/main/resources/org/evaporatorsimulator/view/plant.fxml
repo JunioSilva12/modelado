@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
-
+<?import javafx.scene.paint.Color?>
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.layout.HBox?>
@@ -27,19 +27,33 @@
                 <Canvas fx:id="gridCanvas" width="900" height="800" />
 
                 <!-- Cable que conecta los dos cuadros -->
-                <Line startX="96" startY="505" endX="96" endY="665" stroke="#6287bb" strokeWidth="4"/>
-
-                <Path stroke="#6287bb" strokeWidth="4" fx:id="Ali1" >
+                <!-- Tubería (Path) -->
+                <Path stroke="GRAY" strokeWidth="5">
                         <elements>
+                        <MoveTo x="96" y="505" />
+                        <LineTo x="96" y="665" />
+                        </elements>
+                </Path>
+
+                <!-- Líquido en la tubería (Path) que seguirá la tubería -->
+                <Path fx:id="waterFlow" stroke="6287bb" strokeWidth="5" strokeDashArray="505,665" visible="false">
+                        <elements>
+                        <MoveTo x="96" y="505" />
+                        <LineTo x="96" y="505" />
+                </elements>
+                </Path>
+ 
+                <Path stroke="GRAY" strokeWidth="4" fx:id="AliFrio" >
+                        <elements>
+
                                 <MoveTo x="100" y="670"/>
                                 <LineTo x="200" y="670"/>
                                 <LineTo x="200" y="340"/>
-                                <LineTo x="96" y="340"/>
-                                <LineTo x="96" y="400"/>
+                                <LineTo x="124" y="340"/>
+                                <LineTo x="124" y="400"/>
 
                         </elements>
-                </Path>
-                <Path stroke="#6287bb" strokeWidth="4" fx:id="Ali2" >
+
                         <elements>
                                 <MoveTo x="100" y="670"/>
                                 <LineTo x="413" y="670"/>
@@ -47,30 +61,31 @@
 
 
                         </elements>
-                </Path>
-                <Polygon points="413,640,403,660,423,660" fill="6287bb"/>
-                <Path stroke="#6287bb" strokeWidth="4" fx:id="Ali3" >
+
+
                         <elements>
                                 <MoveTo x="570" y="600"/>
                                 <LineTo x="570" y="580"/>
                                 <LineTo x="720" y="580"/>
                                 <LineTo x="720" y="255"/>
-                                <LineTo x="640" y="255"/>
+                                <LineTo x="610" y="255"/>
 
 
                         </elements>
                 </Path>
-                <!-- Definir la flecha como un triángulo apuntando a la izquierda -->
-                <Polygon points="630,255,650,245,650,265" fill="#6287bb"/>
 
-                <Path stroke="#ff00ff" strokeWidth="4" fx:id="AliCal1" >
+                <!-- Definir la flecha como un triángulo apuntando a la izquierda -->
+<!--                <Polygon points="630,255,650,245,650,265" fill="#6287bb"/>-->
+<!--                <Polygon points="413,640,403,660,423,660" fill="6287bb"/>-->
+
+                <Path stroke="#ff00ff" strokeWidth="4" fx:id="AliCal" >
                         <elements>
                                 <MoveTo x="600" y="380"/>
                                 <LineTo x="600" y="430"/>
 
                         </elements>
                 </Path>
-                <Path stroke="#02b4d8" strokeWidth="4" fx:id="LinCon1" >
+                <Path stroke="#02b4d8" strokeWidth="4" fx:id="LinCon" >
                         <elements>
                                 <MoveTo x="515" y="80"/>
                                 <LineTo x="515" y="160"/>
@@ -79,7 +94,10 @@
 
                         </elements>
                 </Path>
-                <Path stroke="#e79e6d" strokeWidth="4" fx:id="VapGen1" >
+
+
+
+                <Path stroke="#e79e6d" strokeWidth="4" fx:id="VapGen" >
                         <elements>
                                 <MoveTo x="600" y="200"/>
                                 <LineTo x="600" y="140"/>
@@ -90,7 +108,7 @@
 
                         </elements>
                 </Path>
-                <Path stroke="#f9f264" strokeWidth="4" fx:id="vacioL1" >
+                <Path stroke="#f9f264" strokeWidth="4" fx:id="VacioL" >
                         <elements>
                                 <MoveTo x="55" y="260"/>
                                 <LineTo x="55" y="100"/>
@@ -106,6 +124,26 @@
                                 <LineTo x="480" y="380"/>
                                 <LineTo x="480" y="430"/>
 
+                        </elements>
+                        <elements>
+                                <MoveTo x="580" y="430"/>
+                                <LineTo x="580" y="380"/>
+                                <LineTo x="480" y="380"/>
+                        </elements>
+                </Path>
+                <Path stroke="#d33035" strokeWidth="4" fx:id="VapCaliente" >
+                        <elements>
+                                <MoveTo x="650" y="560"/>
+                                <LineTo x="590" y="560"/>
+                                <LineTo x="590" y="600"/>
+                        </elements>
+                        <elements>
+                                <MoveTo x="590" y="620"/>
+                                <LineTo x="590" y="720"/>
+                                <LineTo x="480" y="720"/>
+                                <MoveTo x="550" y="720"/>
+                                <LineTo x="550" y="680"/>
+                                <LineTo x="590" y="680"/>
                         </elements>
                 </Path>
 
@@ -208,6 +246,32 @@
                 </ImageView>
 
         </HBox>
+
+                <!-- VALVULAS -->
+                <HBox layoutX="60" layoutY="330" styleClass="">
+                        <ImageView fitWidth="20" fitHeight="15" fx:id="V1">
+                                <image>
+                                        <Image url="@images/valvula de bola-close.png"/>
+                                </image>
+                        </ImageView>
+                </HBox>
+                <HBox layoutX="85" layoutY="330" styleClass="">
+                        <ImageView fitWidth="20" fitHeight="15" fx:id="V2">
+                                <image>
+                                        <Image url="@images/valvula de bola-close.png"/>
+                                </image>
+                        </ImageView>
+                </HBox>
+                <HBox layoutX="80" layoutY="520" styleClass="">
+                        <ImageView fitWidth="30" fitHeight="20" fx:id="V3" onMouseClicked="#openV3">
+                                <image>
+                                        <Image url="@images/valvula de bola-close.png"/>
+                                </image>
+                        </ImageView>
+                </HBox>
+
+
+
 
         </children>
 </Pane>

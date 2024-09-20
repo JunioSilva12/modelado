@@ -1,10 +1,11 @@
 package org.evaporatorsimulator.controller;
 
+
+import javafx.animation.*;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -15,11 +16,12 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Path;
 import javafx.scene.transform.Scale;
-
+import javafx.util.Duration;
 
 public class PlantController {
 
 
+    public ImageView V3 ;
     public ImageView tankAli;
     public ImageView i2;
     public ImageView i1;
@@ -30,10 +32,18 @@ public class PlantController {
     public ImageView bombaB1;
     public ImageView bombaB2;
     public ImageView evap;
-    public Path Ali3;
-    public Path Ali2;
-    public Path Ali1;
 
+    public Path AliFrio;
+    public Path VapCaliente;
+    public Path VacioL;
+    public Path VapGen;
+    public Path LinCon;
+    public Path AliCal;
+
+
+    private boolean isOpenV3 = false;
+    private double waterLevel = 505; // Nivel del agua en la tubería
+    private double emptyLevel = 505; // Nivel del agua en la tubería
     @FXML
     private Canvas gridCanvas;
 
@@ -41,7 +51,8 @@ public class PlantController {
     private Pane plantPane;
     @FXML
 
-
+    private Path waterFlow; // El rectángulo que representa el líquido dentro de la tubería
+    Timeline timeline = new Timeline();
     private final double MIN_SCALE = 1.0; // Escala mínima permitida
     private final double ZOOM_FACTOR = 1.1; // Factor de zoom
 
@@ -158,6 +169,7 @@ public class PlantController {
         Tooltip linea3 = createCustomTooltip("linea de vacio");
         Tooltip linea4 = createCustomTooltip("linea de condesado");
         Tooltip linea5 = createCustomTooltip("linea de vapor generado");
+        Tooltip linea6 = createCustomTooltip("linea de vapor vivo");
 
 
         Tooltip.install(bombaVacioImg, tooltip1);
@@ -171,9 +183,13 @@ public class PlantController {
         Tooltip.install(tankCond, tooltip5);
         Tooltip.install(tankProduct, tooltip6);
         Tooltip.install(tankAli, tooltip4);
-        Tooltip.install(Ali1, linea1);
-        Tooltip.install(Ali2, linea1);
-        Tooltip.install(Ali3, linea1);
+        Tooltip.install(AliFrio, linea1);
+        Tooltip.install(AliCal, linea2);
+        Tooltip.install(this.VacioL, linea3);
+        Tooltip.install(this.LinCon, linea4);
+        Tooltip.install(this.VapGen, linea5);
+        Tooltip.install(this.VapCaliente, linea6);
+
 
 
         scale = new Scale(1, 1, 0, 0);
@@ -188,14 +204,98 @@ public class PlantController {
 
 
 
-    }
- /*   @FXML
-    private void onStartButtonClick(ActionEvent event) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Button Clicked");
-        alert.setHeaderText(null);
-        alert.setContentText("Start button was clicked!");
-        alert.showAndWait();
-    }*/
 
+
+
+    }
+
+    public void openV3(MouseEvent mouseEvent) {
+   if(!isOpenV3) {
+       V3.setImage(new Image(getClass().getResource("/org/evaporatorsimulator/view/images/valvula de bola-open.PNG").toExternalForm()));
+       // Cambiar el color de la válvula a verde cuando se abra
+
+
+       // Mostrar el rectángulo del líquido (el agua) y simular que llena la tubería
+      // waterFlow.setVisible(true);
+
+       // Mostrar el Path del líquido (el agua) en la tubería
+       waterFlow.setVisible(true);
+
+       // Timeline para manipular el strokeDashOffset y hacer que el trazo empiece desde arriba hacia abajo
+       startWaterFlow();
+   }else {
+       V3.setImage(new Image(getClass().getResource("/org/evaporatorsimulator/view/images/valvula de bola-close.PNG").toExternalForm()));
+       waterFlow.setVisible(true);
+       startEmptyPipe();
+   }
+   this.isOpenV3=!isOpenV3;
+    }
+
+
+    private void startWaterFlow() {
+        waterFlow.setVisible(true);
+        waterFlow.setStroke(Color.BLUE);
+        waterLevel = 505; // Reiniciar nivel de agua en la tubería
+
+
+        waterFlow.setVisible(true);
+        KeyFrame keyFrame = new KeyFrame(Duration.seconds(0.05), event -> {
+            if (waterLevel < 665) {
+                waterLevel += 1; // Incrementar nivel del agua
+
+                updateWaterFlow();
+            } else {
+                stopWaterFlow();
+            }
+        });
+
+        timeline.getKeyFrames().add(keyFrame);
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
+    }
+
+    private void stopWaterFlow() {
+        waterFlow.setVisible(true);
+    }
+
+    private void updateWaterFlow() {
+        waterFlow.getElements().clear();
+        waterFlow.getElements().add(new javafx.scene.shape.MoveTo(96, 505));
+        waterFlow.getElements().add(new javafx.scene.shape.LineTo(96, waterLevel+10 ));
+    }
+
+    private void startEmptyPipe() {
+        // waterFlow.setVisible(true);
+        waterFlow.setStroke(Color.BLUE);
+        emptyLevel = 505; // Reiniciar nivel de agua en la tubería
+
+
+        waterFlow.setVisible(true);
+        KeyFrame keyFrame = new KeyFrame(Duration.seconds(0.05), event -> {
+            if (emptyLevel < 665) {
+                emptyLevel += 1; // decrementa nivel del agua
+
+                updateEmptyPipe();
+            } else {
+                stopEmptyPipe();
+            }
+        });
+
+        timeline.getKeyFrames().add(keyFrame);
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
+    }
+
+    private void stopEmptyPipe() {
+        waterFlow.setVisible(true);
+    }
+
+    private void updateEmptyPipe() {
+        waterFlow.getElements().clear();
+        waterFlow.getElements().add(new javafx.scene.shape.MoveTo(96, emptyLevel+10));
+        waterFlow.getElements().add(new javafx.scene.shape.LineTo(96, waterLevel ));
+    }
 }
+
+
+
