@@ -36,12 +36,7 @@
                 </Path>
 
                 <!-- Líquido en la tubería (Path) que seguirá la tubería -->
-                <Path fx:id="waterFlow" stroke="6287bb" strokeWidth="5" strokeDashArray="505,665" visible="false">
-                        <elements>
-                        <MoveTo x="96" y="505" />
-                        <LineTo x="96" y="505" />
-                </elements>
-                </Path>
+
  
                 <Path stroke="GRAY" strokeWidth="4" fx:id="AliFrio" >
                         <elements>
@@ -57,7 +52,7 @@
                         <elements>
                                 <MoveTo x="100" y="670"/>
                                 <LineTo x="413" y="670"/>
-                                <LineTo x="413" y="660"/>
+                                <LineTo x="413" y="640"/>
 
 
                         </elements>
@@ -77,7 +72,17 @@
                 <!-- Definir la flecha como un triángulo apuntando a la izquierda -->
 <!--                <Polygon points="630,255,650,245,650,265" fill="#6287bb"/>-->
 <!--                <Polygon points="413,640,403,660,423,660" fill="6287bb"/>-->
+                <Path fx:id="waterFlow" stroke="6287bb" strokeWidth="5" strokeDashArray="505,665" visible="false">
+                        <elements>
+                                <MoveTo x="96" y="505" />
+                                <LineTo x="96" y="505" />
+                        </elements>
+                </Path>
+                <Path fx:id="waterFlow2" stroke="6287bb" strokeWidth="5" visible="true">
+                        <elements>
 
+                        </elements>
+                </Path>
                 <Path stroke="#ff00ff" strokeWidth="4" fx:id="AliCal" >
                         <elements>
                                 <MoveTo x="600" y="380"/>
@@ -199,7 +204,7 @@
                         </image>
                 </ImageView>
         </HBox>
-        <HBox layoutX="240" layoutY="655" styleClass="">
+        <HBox layoutX="300" layoutY="655" styleClass="">
                 <ImageView fitWidth="40" fitHeight="30"  fx:id="medFlujoFir">
                         <image>
                                 <Image url="@images/medidor.png"/>

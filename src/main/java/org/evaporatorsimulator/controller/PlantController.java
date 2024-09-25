@@ -18,6 +18,8 @@ import javafx.scene.shape.Path;
 import javafx.scene.transform.Scale;
 import javafx.util.Duration;
 
+
+
 public class PlantController {
 
 
@@ -42,8 +44,9 @@ public class PlantController {
 
 
     private boolean isOpenV3 = false;
-    private double waterLevel = 505; // Nivel del agua en la tubería
-    private double emptyLevel = 505; // Nivel del agua en la tubería
+   // private double waterLevel = 505; // Nivel del agua en la tubería
+    double level;
+
     @FXML
     private Canvas gridCanvas;
 
@@ -52,9 +55,34 @@ public class PlantController {
     @FXML
 
     private Path waterFlow; // El rectángulo que representa el líquido dentro de la tubería
-    Timeline timeline = new Timeline();
+    @FXML
+    private Path waterFlow2;
+    Timeline timeline ;
     private final double MIN_SCALE = 1.0; // Escala mínima permitida
     private final double ZOOM_FACTOR = 1.1; // Factor de zoom
+    Timeline emptytimeline ;
+    private double[][] animationStepsAli1 = {
+            {96, 505,96, 665,0.02 ,1,1} ,   // Animación 1: {x, y, incrementoY, límiteY,time,isVertical, sentido}
+            {100, 670, 200, 670,0.02 ,0,1},//fragmentacion de tubería
+            {200, 670, 413, 670,0.02 ,0,1},// Animación 2: {x, y, incrementoY, límiteY,time,isVertical, sentido}
+            {413, 670, 413, 620,0.02 ,1,0},// Animación 3: {x, y, incrementoY, límiteY,time,isVertical, sentido}
+            {413, 620, 570, 620,0.02 ,0,1},// Animación 4: {x, y, incrementoY, límiteY,time,isVertical, sentido}
+            {570, 620, 570, 580,0.02 ,1,0},// Animación 5: {x, y, incrementoY, límiteY,time,isVertical, sentido}
+           {570, 580, 720, 580,0.02 ,0,1},// Animación 6 {x, y, incrementoY, límiteY,time,isVertical, sentido}
+            {720, 580, 720, 255,0.02 ,1,0},// Animación 7: {x, y, incrementoY, límiteY,time,isVertical, sentido}
+            {720, 255, 610, 255,0.02 ,0,0},// Animación 8: {x, y, incrementoX, límiteX,time}
+            // Puedes agregar más configuraciones si cambian las coordenadas en cada animación
+    };
+    private double[][] animationStepsAli2 = {
+            {200, 670,200, 340,0.02 ,1,0} ,   // Animación 1: {x, y, incrementoY, límiteY,time,isVertical, sentido}
+            {200, 340, 124, 340,0.02 ,0,0},// Animación 2: {x, y, incrementoY, límiteY,time,isVertical, sentido}
+            {124, 340, 124, 400,0.02 ,1,1},// Animación 3: {x, y, incrementoY, límiteY,time,isVertical, sentido}
+
+    };
+
+   // public int currentAnimationIndex = 0;
+    private int totalAnimations = 9;       // Total de animaciones que queremos hacer
+    private double emptyLevel = 505;
 
     private double initialX;
     private double initialY;
@@ -68,6 +96,7 @@ public class PlantController {
         initialTranslateX = plantPane.getTranslateX();
         initialTranslateY = plantPane.getTranslateY();
     }
+    // Crear un SequentialTransition para encadenar las animaciones
 
     @FXML
     private void handleMouseDragged2(MouseEvent event) {
@@ -184,6 +213,7 @@ public class PlantController {
         Tooltip.install(tankProduct, tooltip6);
         Tooltip.install(tankAli, tooltip4);
         Tooltip.install(AliFrio, linea1);
+        Tooltip.install(this.waterFlow, linea1);
         Tooltip.install(AliCal, linea2);
         Tooltip.install(this.VacioL, linea3);
         Tooltip.install(this.LinCon, linea4);
@@ -231,69 +261,325 @@ public class PlantController {
    this.isOpenV3=!isOpenV3;
     }
 
+    private void runNextAnimation(int currentAniIndex, int totalAnimations , double[][] animationStepsAli , int aniId, Path flow, Boolean llenando) {
+        final int[] currentAnimationIndex = {currentAniIndex};
+        if (currentAnimationIndex[0] < totalAnimations) {
+            // Resetea el nivel de agua para la nueva animación
+            double[] currentAnimation = animationStepsAli[currentAnimationIndex[0]];
+            double startX = currentAnimation[0];
+            double startY = currentAnimation[1];
+            double endX = currentAnimation[2];
+            double endY = currentAnimation[3];
+            //  double timmer = currentAnimation[4];
+            boolean isVertical = currentAnimation[5] == 1;
+            double speed = currentAnimation[4];
+            double direction = currentAnimation[6];
+
+            System.out.println("iniciando animacion "+(currentAnimationIndex[0] +1));
+            System.out.println("speed animacion "+speed);
+            System.out.println("startY animacion "+startY);
+            System.out.println("startX animacion "+startX);
+            System.out.println("increment animacion "+endX);
+            System.out.println("limit animacion "+endY);
+            final double[] waterLevel = {(isVertical) ? startY : startX};
+            if(currentAnimationIndex[0] == 2 && aniId== 1){
+                System.out.println("fragmentacion1");
+                waterFlow2.setVisible(true);
+                runNextAnimation(0,3,animationStepsAli2,2,this.waterFlow2, llenando);
+            }
+            // Crea un Timeline para la animación actual
+            Timeline timeline = new Timeline();
+            timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(0.05), event -> {
+
+                if (isVertical) {
+                    if(direction==1){
+                        if(llenando){
+                        if (waterLevel[0] < endY) {
+                            waterLevel[0] += 1;  // Incrementa el nivel de agua
+                            updateWaterFlow(startX, startY, endX, waterLevel[0], isVertical,currentAnimationIndex[0],flow);
+                        } else {
+                            System.out.println("Cerró animación to bottom" + (currentAnimationIndex[0] + 1));
+                            currentAnimationIndex[0]++;  // Pasa a la siguiente animación
+                            timeline.stop();  // Detén el timeline actual
+                            runNextAnimation(currentAnimationIndex[0],totalAnimations,animationStepsAli,aniId,flow, llenando);  // Ejecuta la siguiente animación
+                        }
+                        }else{
+                            if (waterLevel[0] < endY) {
+                                waterLevel[0] += 1;  // Incrementa el nivel de agua
+                                updateWaterFlow(startX, waterLevel[0], endX, endY, isVertical,currentAnimationIndex[0],flow);
+                            } else {
+                                System.out.println("Cerró animación to bottom" + (currentAnimationIndex[0] + 1));
+                                currentAnimationIndex[0]++;  // Pasa a la siguiente animación
+                                timeline.stop();  // Detén el timeline actual
+                                runNextAnimation(currentAnimationIndex[0],totalAnimations,animationStepsAli,aniId,flow, llenando);  // Ejecuta la siguiente animación
+                            }
+
+                        }
+                    }else {
+                        if(llenando) {
+                            if (waterLevel[0] > endY) {
+                                waterLevel[0] -= 1;  // Incrementa el nivel de agua
+                                updateWaterFlow(startX, startY, endX, waterLevel[0], isVertical, currentAniIndex, flow);
+                            } else {
+                                System.out.println("Cerró animación to up" + (currentAnimationIndex[0] + 1));
+                                currentAnimationIndex[0]++;  // Pasa a la siguiente animación
+                                timeline.stop();  // Detén el timeline actual
+                                runNextAnimation(currentAnimationIndex[0], totalAnimations, animationStepsAli, aniId, flow, llenando);  // Ejecuta la siguiente animación
+                            }
+                        }else {
+                            if (waterLevel[0] > endY) {
+                                waterLevel[0] -= 1;  // Incrementa el nivel de agua
+                                updateWaterFlow(startX, waterLevel[0], endX, endY, isVertical, currentAniIndex, flow);
+                            } else {
+                                System.out.println("Cerró animación to up" + (currentAnimationIndex[0] + 1));
+                                currentAnimationIndex[0]++;  // Pasa a la siguiente animación
+                                timeline.stop();  // Detén el timeline actual
+                                runNextAnimation(currentAnimationIndex[0], totalAnimations, animationStepsAli, aniId, flow, llenando);  // Ejecuta la siguiente animación
+                            }
+                        }
+                    }
+
+                } else {
+                    if(direction==1){
+                        if(llenando) {
+                            if (waterLevel[0] < endX) {
+                                waterLevel[0] += 1;  // Incrementa el nivel de agua
+                                updateWaterFlow(startX, startY, waterLevel[0], endY, isVertical, currentAniIndex, flow);
+                            } else {
+                                System.out.println("Cerró animación to Right" + (currentAnimationIndex[0] + 1));
+                                currentAnimationIndex[0]++;  // Pasa a la siguiente animación
+                                timeline.stop();  // Detén el timeline actual
+                                runNextAnimation(currentAnimationIndex[0], totalAnimations, animationStepsAli, aniId, flow, llenando);  // Ejecuta la siguiente animación
+                            }
+                        }else {
+                            if (waterLevel[0] < endX) {
+                                waterLevel[0] += 1;  // Incrementa el nivel de agua
+                                updateWaterFlow(waterLevel[0], startY,endX, endY, isVertical, currentAniIndex, flow);
+                            } else {
+                                System.out.println("Cerró animación to Right" + (currentAnimationIndex[0] + 1));
+                                currentAnimationIndex[0]++;  // Pasa a la siguiente animación
+                                timeline.stop();  // Detén el timeline actual
+                                runNextAnimation(currentAnimationIndex[0], totalAnimations, animationStepsAli, aniId, flow, llenando);  // Ejecuta la siguiente animación
+                            }
+                        }
+                    }else {
+                        if(llenando) {
+                            if (waterLevel[0] > endX) {
+                                waterLevel[0] -= 1;  // Incrementa el nivel de agua
+                                updateWaterFlow(startX, startY, waterLevel[0], endY, isVertical, currentAniIndex, flow);
+                            } else {
+                                System.out.println("Cerró animación to Left" + (currentAnimationIndex[0] + 1));
+                                currentAnimationIndex[0]++;  // Pasa a la siguiente animación
+                                timeline.stop();  // Detén el timeline actual
+                                runNextAnimation(currentAnimationIndex[0], totalAnimations, animationStepsAli, aniId, flow, llenando);  // Ejecuta la siguiente animación
+                            }
+                        }else {
+                            if (waterLevel[0] > endX) {
+                                waterLevel[0] -= 1;  // Incrementa el nivel de agua
+                                updateWaterFlow( waterLevel[0], startY, endX, endY, isVertical, currentAniIndex, flow);
+                            } else {
+                                System.out.println("Cerró animación to Left" + (currentAnimationIndex[0] + 1));
+                                currentAnimationIndex[0]++;  // Pasa a la siguiente animación
+                                timeline.stop();  // Detén el timeline actual
+                                runNextAnimation(currentAnimationIndex[0], totalAnimations, animationStepsAli, aniId, flow, llenando);  // Ejecuta la siguiente animación
+                            }
+                        }
+                    }
+
+                }
+
+            }));
+
+            timeline.setCycleCount(Timeline.INDEFINITE);  // Se repetirá hasta que termine
+            timeline.play();  // Inicia la animación
+        } else {
+            System.out.println("Todas las animaciones terminaron.");
+            if(!llenando){
+                stopEmptyPipe();
+            }
+        }
+    }
+
+    private KeyFrame createKeyFrame(int animationIndex) {
+        if (animationIndex >= animationStepsAli1.length ) {
+            System.out.println("Todas las animaciones completadas.");
+            return null;  // Se puede retornar un KeyFrame nulo si ya se completaron todas las animaciones
+        }
+
+        double[] currentAnimation = animationStepsAli1[animationIndex];
+        double startX = currentAnimation[0];
+        double startY = currentAnimation[1];
+        double endX = currentAnimation[2];
+        double endY = currentAnimation[3];
+      //  double timmer = currentAnimation[4];
+        boolean isVertical = currentAnimation[5] == 1;
+        double speed = currentAnimation[4];
+       // System.out.println("iniciando animacion "+(currentAnimationIndex[0]+1));
+        System.out.println("speed animacion "+speed);
+        System.out.println("startY animacion "+startY);
+        System.out.println("startX animacion "+startX);
+        System.out.println("increment animacion "+endX);
+        System.out.println("limit animacion "+endY);
+        final double[] waterLevel = {startY};
+        return new KeyFrame(Duration.seconds(speed), event -> {
+            if (waterLevel[0] < endY) {
+                waterLevel[0] += 1;
+                updateWaterFlow(startX, startY,endX, waterLevel[0], isVertical,0,this.waterFlow);
+            } else {
+                System.out.println("cerro animacion");
+                //event.consume();
+                //currentAnimationIndex++;  // Pasar a la siguiente animación
+
+            }
+        });
+    }
+
+
+            private void startNextAnimation() {
+//        if (currentAnimationIndex >= totalAnimations) {
+//            System.out.println("Secuencia de animaciones completada.");
+//            timeline.stop();  // Detener la animación después de completar todas
+//            stopWaterFlow();
+//            return;
+//        }
+
+
+                KeyFrame[] keyFramesAli = new KeyFrame[animationStepsAli1.length] ;
+                for (int i=0 ;i<animationStepsAli1.length;i++) {
+                    keyFramesAli[i]=createKeyFrame(i);
+
+                }
+                // sequentialTransition = new SequentialTransition();
+
+                //Duration totalDuration = Duration.ZERO;
+//                for (KeyFrame keyFram : keyFramesAli) {
+//                    Timeline scaleTimeline = new Timeline();
+//                    scaleTimeline.getKeyFrames().add(keyFram);
+//                    sequentialTransition.getChildren().add(scaleTimeline);
+//
+//
+//                }
+
+                // Iniciar el Timeline
+               // timeline.play();
+                // Iniciar la animación
+               // sequentialTransition.play();
+                Boolean llenando=true;
+                runNextAnimation(0,  this.totalAnimations , this.animationStepsAli1,1,this.waterFlow,llenando);  // Iniciar la primera animación
+               // runNextAnimation(0,  3 , this.animationStepsAli2);
+
+            }
 
     private void startWaterFlow() {
         waterFlow.setVisible(true);
         waterFlow.setStroke(Color.BLUE);
-        waterLevel = 505; // Reiniciar nivel de agua en la tubería
 
 
-        waterFlow.setVisible(true);
-        KeyFrame keyFrame = new KeyFrame(Duration.seconds(0.05), event -> {
-            if (waterLevel < 665) {
-                waterLevel += 1; // Incrementar nivel del agua
+       // waterLevel = 505; // Reiniciar nivel de agua en la tubería
+        // Validación: asegurarnos de que el array de velocidades esté correctamente inicializado
 
-                updateWaterFlow();
-            } else {
-                stopWaterFlow();
-            }
-        });
 
-        timeline.getKeyFrames().add(keyFrame);
-        timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.play();
+        waterFlow.getElements().clear(); // Limpia el Path antes de comenzar
+         double waterLevel = 505;
+        waterLevel = animationStepsAli1[0][1]; // Comienza con el nivel inicial de la primera animación
+       // currentAnimationIndex = 0; // Reinicia el índice de la animación
+
+        // Inicializar el Timeline
+        //this.timeline = new Timeline();
+        //timeline.setCycleCount(Timeline.INDEFINITE);  // Repetición indefinida controlada por lógica
+
+        startNextAnimation();
+
+
     }
 
     private void stopWaterFlow() {
+        if (timeline != null) {
+            timeline.stop();
+        }
         waterFlow.setVisible(true);
     }
 
-    private void updateWaterFlow() {
-        waterFlow.getElements().clear();
-        waterFlow.getElements().add(new javafx.scene.shape.MoveTo(96, 505));
-        waterFlow.getElements().add(new javafx.scene.shape.LineTo(96, waterLevel+10 ));
+    private void updateWaterFlow(double iniX , double iniY ,double endX,double endY ,Boolean isVertical ,int elementID,  Path flow) {
+        System.out.print(" ele:"+elementID+"__");
+        if (flow.getElements().size() > elementID*2) {
+            // Ya hay un 'MoveTo' y 'LineTo', los actualizamos
+            javafx.scene.shape.MoveTo moveTo = (javafx.scene.shape.MoveTo) flow.getElements().get(elementID*2);
+            javafx.scene.shape.LineTo lineTo = (javafx.scene.shape.LineTo) flow.getElements().get(elementID*2+1);
+
+            if (isVertical) {
+                System.out.println("Actualizando tubo vertical: " + iniX + ".." + iniY + ".." + endY);
+                moveTo.setX(iniX);
+                moveTo.setY(iniY);
+                lineTo.setX(iniX);
+                lineTo.setY(endY);
+            } else {
+                System.out.println("Actualizando tubo horizontal: " + iniX + ".." + iniY + ".." + endX);
+                moveTo.setX(iniX);
+                moveTo.setY(iniY);
+                lineTo.setX(endX);
+                lineTo.setY(iniY);
+            }
+        } else {
+            // Si no hay suficientes elementos, los creamos
+            System.out.println("Creando nuevo tubo");
+
+            javafx.scene.shape.MoveTo moveTo;
+            javafx.scene.shape.LineTo lineTo;
+
+            if (isVertical) {
+                moveTo = new javafx.scene.shape.MoveTo(iniX, iniY);
+                lineTo = new javafx.scene.shape.LineTo(iniX, endY);
+            } else {
+                moveTo = new javafx.scene.shape.MoveTo(iniX, iniY);
+                lineTo = new javafx.scene.shape.LineTo(endX, iniY);
+            }
+
+
+            // Agrega los elementos al contenedor
+            flow.getElements().add(moveTo);
+            flow.getElements().add(lineTo);
+        }
+
+
+
+
     }
 
     private void startEmptyPipe() {
-        // waterFlow.setVisible(true);
+         waterFlow.setVisible(true);
         waterFlow.setStroke(Color.BLUE);
         emptyLevel = 505; // Reiniciar nivel de agua en la tubería
-
-
+        emptytimeline = new Timeline();
+       level = emptyLevel;
         waterFlow.setVisible(true);
-        KeyFrame keyFrame = new KeyFrame(Duration.seconds(0.05), event -> {
-            if (emptyLevel < 665) {
-                emptyLevel += 1; // decrementa nivel del agua
+        //mientras va llenando va reescribiendo de donde empieza
 
-                updateEmptyPipe();
-            } else {
-                stopEmptyPipe();
-            }
-        });
+        Boolean llenando=false;
+        runNextAnimation(0,  this.totalAnimations , this.animationStepsAli1,1,this.waterFlow,llenando);  // Iniciar la primera animación
 
-        timeline.getKeyFrames().add(keyFrame);
-        timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.play();
+
     }
 
     private void stopEmptyPipe() {
-        waterFlow.setVisible(true);
+       // waterFlow.setVisible(false);
+        waterFlow2.setVisible(false);
+     //   timeline.stop();
     }
 
-    private void updateEmptyPipe() {
-        waterFlow.getElements().clear();
-        waterFlow.getElements().add(new javafx.scene.shape.MoveTo(96, emptyLevel+10));
-        waterFlow.getElements().add(new javafx.scene.shape.LineTo(96, waterLevel ));
+    private void updateEmptyPipe(double iniX , double iniY , Boolean isVertical, double level) {
+        if(isVertical) {
+            System.out.println("vaciando tubo vertical: "+iniX+".."+iniY+".."+level);
+           // waterFlow.getElements().clear();
+
+            waterFlow.getElements().add(new javafx.scene.shape.MoveTo(iniX, level ));
+            waterFlow.getElements().add(new javafx.scene.shape.LineTo(iniX, iniY));
+        }else{
+            System.out.println("vaciando tubo horizontal: "+iniX+".."+iniY+".."+level);
+            //waterFlow.getElements().clear();
+            waterFlow.getElements().add(new javafx.scene.shape.MoveTo(iniX, iniY));
+            waterFlow.getElements().add(new javafx.scene.shape.LineTo(level , iniY));
+        }
     }
 }
 
