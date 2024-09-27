@@ -78,8 +78,18 @@
                                 <LineTo x="96" y="505" />
                         </elements>
                 </Path>
-                <Path fx:id="waterFlow2" stroke="6287bb" strokeWidth="5" visible="true">
+
+                <Path fx:id="waterFlow2" stroke="BLUE" strokeWidth="5" >
                         <elements>
+
+                        </elements>
+                </Path>
+                <Path  stroke="BLUE" strokeWidth="5" >
+                        <elements>
+                                <MoveTo x="68" y="380"/>
+                                <LineTo x="68" y="320"/>
+                                <MoveTo x="95" y="380"/>
+                                <LineTo x="95" y="320"/>
 
                         </elements>
                 </Path>
@@ -87,7 +97,10 @@
                         <elements>
                                 <MoveTo x="600" y="380"/>
                                 <LineTo x="600" y="430"/>
-
+                        </elements>
+                        <elements>
+                                <MoveTo x="600" y="430"/>
+                                <LineTo x="600" y="540"/>
                         </elements>
                 </Path>
                 <Path stroke="#02b4d8" strokeWidth="4" fx:id="LinCon" >
@@ -97,6 +110,10 @@
                                 <LineTo x="500" y="160"/>
                                 <LineTo x="500" y="440"/>
 
+                        </elements>
+                        <elements>
+                                <MoveTo x="500" y="430"/>
+                                <LineTo x="500" y="540"/>
                         </elements>
                 </Path>
 
@@ -136,9 +153,9 @@
                                 <LineTo x="480" y="380"/>
                         </elements>
                 </Path>
-                <Path stroke="#d33035" strokeWidth="4" fx:id="VapCaliente" >
+                <Path stroke="#d33035" strokeWidth="3" fx:id="VapCaliente" >
                         <elements>
-                                <MoveTo x="650" y="560"/>
+                                <MoveTo x="750" y="560"/>
                                 <LineTo x="590" y="560"/>
                                 <LineTo x="590" y="600"/>
                         </elements>
@@ -149,6 +166,14 @@
                                 <MoveTo x="550" y="720"/>
                                 <LineTo x="550" y="680"/>
                                 <LineTo x="590" y="680"/>
+                        </elements>
+                        <elements>
+                                <MoveTo x="800" y="305"/>
+                                <LineTo x="590" y="305"/>
+                        </elements>
+                        <elements>
+                                <MoveTo x="590" y="345"/>
+                                <LineTo x="510" y="345"/>
                         </elements>
                 </Path>
 
@@ -253,7 +278,7 @@
         </HBox>
 
                 <!-- VALVULAS -->
-                <HBox layoutX="60" layoutY="330" styleClass="">
+                <HBox layoutX="58" layoutY="330" styleClass="">
                         <ImageView fitWidth="20" fitHeight="15" fx:id="V1">
                                 <image>
                                         <Image url="@images/valvula de bola-close.png"/>
@@ -274,7 +299,72 @@
                                 </image>
                         </ImageView>
                 </HBox>
+                <HBox layoutX="410" layoutY="130" styleClass="">
+                        <ImageView fitWidth="30" fitHeight="20" fx:id="V4" onMouseClicked="#openV3" rotate="90">
+                                <image>
+                                        <Image url="@images/valvula de bola-close.png"/>
+                                </image>
+                        </ImageView>
+                </HBox>
+                <HBox layoutX="485" layoutY="300" styleClass="">
+                        <ImageView fitWidth="30" fitHeight="20" fx:id="V5" onMouseClicked="#openV3" >
+                                <image>
+                                        <Image url="@images/valvula de bola-close.png"/>
+                                </image>
+                        </ImageView>
+                </HBox>
+                <HBox layoutX="490" layoutY="525" styleClass="">
+                        <ImageView fitWidth="20" fitHeight="15" fx:id="V6" onMouseClicked="#openV3" >
+                                <image>
+                                        <Image url="@images/valvula de bola-close.png"/>
+                                </image>
+                        </ImageView>
+                </HBox>
+                <HBox layoutX="590" layoutY="525" styleClass="">
+                        <ImageView fitWidth="20" fitHeight="15" fx:id="V7" onMouseClicked="#openV3" >
+                                <image>
+                                        <Image url="@images/valvula de bola-close.png"/>
+                                </image>
+                        </ImageView>
+                </HBox>
 
+                <!-- VALVULAS cortina -->
+                <HBox layoutX="160" layoutY="330" styleClass="">
+                        <ImageView fitWidth="20" fitHeight="15"  fx:id="V9" onMouseClicked="#openV3" rotate="90">
+                                <image>
+                                        <Image url="@images/valcula de cortina-close.png"/>
+                                </image>
+                        </ImageView>
+                </HBox>
+                <HBox layoutX="230" layoutY="660" styleClass="">
+                        <ImageView fitWidth="30" fitHeight="20" fx:id="V10" onMouseClicked="#openV3" rotate="90">
+                                <image>
+                                        <Image url="@images/valcula de cortina-close.png"/>
+                                </image>
+                        </ImageView>
+                </HBox>
+                <HBox layoutX="585" layoutY="160" styleClass="">
+                        <ImageView fitWidth="30" fitHeight="20" fx:id="V11" onMouseClicked="#openV3" >
+                                <image>
+                                        <Image url="@images/valcula de cortina-close.png"/>
+                                </image>
+                        </ImageView>
+                </HBox>
+                <!-- VALVULAS GLOBO -->
+                <HBox layoutX="740" layoutY="295" styleClass="">
+                        <ImageView fitWidth="30" fitHeight="20" fx:id="V14" onMouseClicked="#openV3" rotate="90">
+                                <image>
+                                        <Image url="@images/valvula de globo-close.png"/>
+                                </image>
+                        </ImageView>
+                </HBox>
+                <HBox layoutX="740" layoutY="548" styleClass="">
+                        <ImageView fitWidth="30" fitHeight="20" fx:id="V15" onMouseClicked="#openV3" rotate="90">
+                                <image>
+                                        <Image url="@images/valvula de globo-close.png"/>
+                                </image>
+                        </ImageView>
+                </HBox>
 
 
 
